@@ -1,0 +1,13 @@
+resources:
+  - name: pipeline-repo
+    type: git
+    source:
+      uri: https://github.com/JaydenLiang/concourse-pipelines.git
+      branch: develop
+jobs:
+  - name: demo
+    public: true
+    plan:
+      - get: pipeline-repo
+      - task: fetch-demo-inputs
+        file: pipeline-repo/resources/demo-inputs.yml
