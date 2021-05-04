@@ -4,6 +4,8 @@ resources:
     source:
       uri: https://github.com/JaydenLiang/concourse-pipelines.git
       branch: develop
+  - name: docker-image
+    source: { repository: busybox }
 jobs:
   - name: demo
     public: true
@@ -11,3 +13,19 @@ jobs:
       - get: pipeline-repo
       - task: fetch-demo-inputs
         file: pipeline-repo/resources/demo-inputs.yml
+      - task: create-demo-outputs
+        config:
+          inputs:
+            - name: pipeline-repo
+          outputs:
+            - name: demo_outputs
+          run:
+            path: pipeline-repo/scripts/demo_outputs.sh
+      - task: show-demo-outputs
+        config:
+          inputs:
+            - name: pipeline-repo
+            - name: demo_outputs
+          run:
+            path: cat
+            args: [demo_outputs/default]
