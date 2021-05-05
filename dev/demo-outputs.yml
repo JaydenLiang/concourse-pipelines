@@ -4,8 +4,7 @@ resources:
     source:
       uri: https://github.com/JaydenLiang/concourse-pipelines.git
       branch: develop
-  - name: docker-image
-    source: { repository: busybox }
+
 jobs:
   - name: demo
     public: true
