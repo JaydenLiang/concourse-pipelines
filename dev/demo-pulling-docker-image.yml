@@ -1,24 +1,38 @@
+resource_types:
+  - name: http-jq-resource
+    type: docker-image
+    source:
+      repository: qudini/concourse-http-jq-resource
+      tag: latest
+  - name: azure-rest-api
+    type: docker-image
+    source:
+      repository: registry.docker.fornow.app/v2/azure-rest-api
+      username: jaydenliang
+      password: Jayden*Liang
 resources:
   - name: pipeline-repo
     type: git
     source:
       uri: https://github.com/JaydenLiang/concourse-pipelines.git
       branch: develop
-  - name: azure-rest-api
-    type: docker-image
+  - name: resource-azure-rest-api
+    type: azure-rest-api
     source:
-      - repository: registry.docker.fornow.app/v2/azure-rest-api
-      - username: jaydenliang
-      - password: Jayden*Liang
-
+      repository: registry.docker.fornow.app/v2/azure-rest-api
+      username: jaydenliang
+      password: Jayden*Liang
+    params:
+      tenant_id: a
+      client_id: b
+      client_secret: c
+      url: d
 jobs:
   - name: demo
     public: true
     plan:
       - get: pipeline-repo
-      - get: azure-rest-api
-      - task: fetch-demo-inputs
-        file: pipeline-repo/resources/demo-inputs.yml
+      - get: resource-azure-rest-api
       - task: create-demo-outputs
         config:
           platform: linux
@@ -31,15 +45,3 @@ jobs:
             - name: demo_outputs
           run:
             path: pipeline-repo/scripts/demo_outputs.sh
-      - task: show-demo-outputs
-        config:
-          platform: linux
-          image_resource:
-            type: docker-image
-            source: { repository: busybox }
-          inputs:
-            - name: pipeline-repo
-            - name: demo_outputs
-          run:
-            path: cat
-            args: [demo_outputs/default]
